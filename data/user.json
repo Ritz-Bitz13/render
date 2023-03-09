@@ -1,0 +1,31 @@
+{
+    "user" : [
+        {
+            "DisplayName" : "Bilbo Baggins",
+            "EmailAddress" : "bilbo@domain.ca",
+            "Username" : "bbaggins",
+            "Password" : "123456"
+        },
+
+        {
+            "DisplayName" : "Samwise Gamgee",
+            "EmailAddress" : "Samwise@domain.ca",
+            "Username" : "SammySwine",
+            "Password" : "654321"
+        },
+
+        {
+            "DisplayName" : "Frodo Baggins",
+            "EmailAddress" : "frodo@domain.ca",
+            "Username" : "fbaggins",
+            "Password" : "123321"
+        },
+
+        {
+            "DisplayName" : "Pippen Took",
+            "EmailAddress" : "Pippen@domain.ca",
+            "Username" : "PipTheTip",
+            "Password" : "456654"
+        }
+    ]
+}
