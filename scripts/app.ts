@@ -8,11 +8,11 @@
     {
         console.log("App Started!");
 
-        LoadHeader()
+        LoadHeader();
 
-        LoadContent()
+        LoadLink("home");
 
-        LoadFooter()
+        LoadFooter();
 
     }
     window.addEventListener("load", Start)
@@ -43,15 +43,69 @@
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
+    function LoadLink(link : string, data : string = "") : void
+    {
+        router.ActiveLink = link;
+        AuthGuard();
+        router.LinkData = data;
+
+        history.pushState({}, "", router.ActiveLink);
+        document.title = CapitalizeFirstChar(router.ActiveLink);
+
+        $("ul>li>a").each(function(){
+            $(this).removeClass("active");
+        });
+        $(`li>a:contains(${document.title})`).addClass("active");
+        LoadContent()
+    }
+
+
+    function AddNavigationEvents()
+    {
+        let navLinks = $("ul>li>a");
+        navLinks.off("click");
+        navLinks.off("mouseover");
+
+        navLinks.on("click", function(){
+            LoadLink($(this).attr("data") as string);
+        });
+        navLinks.on("mouseover", function(){
+            $(this).css("cursor", "pointer");
+        });
+    }
+
+    function addLinkEvents(link : string) : void {
+
+        let linkQuery = $(`a.link[data=${link}]`);
+
+        linkQuery.off("click");
+        linkQuery.off("mouseover");
+        linkQuery.off("mouseout");
+
+        linkQuery.css("text-decoration", "underline");
+        linkQuery.css("color", "blue");
+
+        linkQuery.on("click", function() {
+            LoadLink(`${link}`);
+        });
+        linkQuery.on("mouseover", function() {
+            $(this).css("cursor", "pointer");
+            $(this).css("font-weight", "bold");
+        });
+        linkQuery.on("mouseout", function() {
+            $(this).css("font-weight", "normal");
+        });
+
+    }
+
     function LoadHeader() : void
     {
 
         $.get("/views/components/header.html", function(Data){
             $("header").html(Data);
+            $("header").html(Data);
+            AddNavigationEvents();
 
-            document.title = CapitalizeFirstChar(router.ActiveLink);
-
-            $(`li>a:contains(${document.title})`).addClass("active");
             CheckLogin()
         });
     }
@@ -59,11 +113,12 @@
 
     function LoadContent() : void
     {
-        let page = router.ActiveLink;
+        let page : string = router.ActiveLink;
         let callback = ActiveLinkCallback();
 
         $.get(`/views/content/${page}.html`, function(Data){
             $("main").html(Data);
+            CheckLogin();
             callback();
         });
     }
@@ -110,8 +165,7 @@
 
         $("main").append(`<p id="MainParagraph" class="mt-3">This is the Main Paragraph!!</p>`);
 
-        $("body").append(`<article class="container"><p id="ArticleParagraph" 
-                            class ="mt-3">This is my article paragraph</p></article>`);
+       // $("body").append(`<article><p id="ArticleParagraph"  class ="mt-3">This is my article paragraph</p></article>`);
     }
 
     function DisplayProductsPage() : void {
@@ -158,6 +212,12 @@
 
     function DisplayContactsPage() : void{
         console.log("Display Contacts Called");
+
+        $("a[data ='contact-list']").off("click");
+        $("a[data ='contact-list']").on("click", function () {
+            LoadLink("contact-list");
+        });
+
 
         ContactFormValidation();
 
@@ -216,7 +276,7 @@
             contactList.innerHTML = data;
 
             $("#addButton").on("click", () =>{
-                location.href = "/edit#add";
+                LoadLink("edit", "add");
             });
 
             $("button.delete").on("click", function()
@@ -225,11 +285,11 @@
                 {
                     localStorage.removeItem($(this).val() as string);
                 }
-                location.href = "/contact-list";
+                LoadLink("contact-list");
             });
 
             $("button.edit").on("click", function(){
-                location.href = "/edit#" + $(this).val();
+                LoadLink("edit", $(this).val() as string);
             });
 
         }
@@ -254,11 +314,11 @@
                     let emailAddress = document.forms[0].emailAddress.value;
 
                     AddContact(fullName, contactNumber, emailAddress);
-                    location.href = "/contact-list";
+                    LoadLink("contact-list");
                 });
 
                 $("#cancelButton").on("click", () => {
-                    location.href = "/contact-list";
+                    LoadLink("contact-list");
                 });
                 break;
             default:{
@@ -279,11 +339,11 @@
 
                     localStorage.setItem(page, contact.serialize() as string);
 
-                    location.href = "/contact-list";
+                    LoadLink("contact-list");
                 });
 
                 $("#cancelButton").on("click", () => {
-                    location.href = "/contact-list";
+                    LoadLink("contact-list");
                 });
 
             }
@@ -307,6 +367,8 @@
         let messageArea2 = $("#messageArea2");
         messageArea2.hide();
 
+        addLinkEvents("register");
+
         $("#loginButton").on("click", function ()
         {
             let success = false; // set default to false
@@ -327,7 +389,7 @@
                 if(success){
                     sessionStorage.setItem("user", newUser.serialize() as string);
                     messageArea2.removeAttr("class").hide();
-                    location.href = "/contact-list";
+                    LoadLink("contact-list");
                 }else{
                     // fail authentication
                     $("#userNameLogin").trigger("focus").trigger("select");
@@ -341,8 +403,21 @@
 
         $("#cancelButton").on("click", function () {
             document.forms[0].reset();
-            location.href = "/home";
+            LoadLink("home");
         });
+    }
+
+    /**
+     *
+     */
+    function AuthGuard() : void {
+        let protected_routes : string[] = ["contact-list"];
+
+        if (protected_routes.indexOf(router.ActiveLink) > -1){
+            if(!sessionStorage.getItem("user")){
+                router.ActiveLink = "login";
+            }
+        }
     }
 
 
@@ -353,7 +428,7 @@
         }
         $("#logout").on("click", function() {
            sessionStorage.clear();
-           location.href = "/home";
+            LoadLink("home");
         });
 
     }

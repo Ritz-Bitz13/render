@@ -9,6 +9,20 @@ namespace core
         private m_activeLink: string;
         private m_routingTable: string[];
 
+        private m_linkData : string;
+
+        public get LinkData() : string {
+            return this.m_linkData;
+        }
+
+        /**
+         *
+         * @param String
+         */
+        public set LinkData(data : string){
+            this.m_linkData = data;
+        }
+
         /**
          *
          * @returns {string}
@@ -29,6 +43,7 @@ namespace core
         public constructor(){
             this.m_activeLink = "";
             this.m_routingTable = [];
+            this.m_linkData = "";
         }
 
         //public methods

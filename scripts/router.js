@@ -4,6 +4,13 @@ var core;
     class Router {
         m_activeLink;
         m_routingTable;
+        m_linkData;
+        get LinkData() {
+            return this.m_linkData;
+        }
+        set LinkData(data) {
+            this.m_linkData = data;
+        }
         get ActiveLink() {
             return this.m_activeLink;
         }
@@ -13,6 +20,7 @@ var core;
         constructor() {
             this.m_activeLink = "";
             this.m_routingTable = [];
+            this.m_linkData = "";
         }
         Add(route) {
             this.m_routingTable.push(route);

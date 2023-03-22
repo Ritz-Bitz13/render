@@ -12,7 +12,10 @@
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "strictBindCallApply": true,
-
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "Node"
   },
     "exclude": [
     "node_modules"

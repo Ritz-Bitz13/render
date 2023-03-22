@@ -9,7 +9,4 @@
             location.href = "/login";
         }
     }
-
-
-
 })();
